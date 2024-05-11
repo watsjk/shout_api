@@ -16,6 +16,7 @@ gem "tzinfo-data", platforms: %i[ windows jruby ]
 
 gem 'rspec-rails', '~> 6.1', '>= 6.1.2'
 gem 'rspec-mocks', '~> 3.13', '>= 3.13.1'
+gem 'bcrypt', '~> 3.1', '>= 3.1.20'
 gem 'argon2-kdf', '~> 0.2.0'
 gem 'devise', '~> 4.9', '>= 4.9.4'
 

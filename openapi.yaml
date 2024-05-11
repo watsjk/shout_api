@@ -1,0 +1,192 @@
+openapi: 3.0.2
+info:
+  version: '1.0.0'
+  title: Shout
+  description: |
+    This is an **example** API to demonstrate how to create JSON API on RoR.
+    # Introduction
+    This API definition is intended to to be a good starting point for describing your API in 
+    [OpenAPI/Swagger format](https://github.com/OAI/OpenAPI-Specification/blob/master/versions/3.0.2.md).
+    It also demonstrates features of simple social media for photo sharing.
+
+# A list of tags used by the definition with additional metadata.
+# The order of the tags can be used to reflect on their order by the parsing tools.
+tags:
+  - name: Account
+    description: Operations about user account
+  - name: Post
+    description: Operations about user posts
+  - name: Media
+    description: Operations about photo on a post
+  - name: Favorite
+    description: Operations about user saved post
+  - name: Follow
+    description: Operations about user connection
+  - name: Reply
+    description: Operations about user comment on a post or reply
+servers:
+  - url: 'http://localhost:3000/api/v1'
+
+# Holds the relative paths to the individual endpoints. The path is appended to the
+# basePath in order to construct the full URL. 
+paths:
+  '/accounts':
+
+    get:
+      tags:
+        - Account
+      summary:
+        List all accounts
+      operationId: index
+      security:
+        - basic_auth: []
+      responses: # list of responses
+        '200':
+          description: Success
+          content:
+            application/json: # operation response mime type
+              schema: # response schema can be specified for each response
+                type: array
+                items:
+                  $ref: '#/components/schemas/Account'
+              example: # response example
+                - uname: user1
+                  email: user1@example.com
+        '401':
+          description: Unauthorized
+
+    post:
+      tags:
+        - Account
+      summary: Create user account
+      operationId: create
+      security:
+        - basic_auth: []
+      responses:
+        '201':
+          description: Account created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Account'
+              example: # response example
+                uname: user1
+                email: user1@example.com
+        '422':
+          description: Invalid Parameters or resource exist
+        '401':
+          description: Unauthorized
+
+  '/accounts/{id}': # path parameter in curly braces
+    get: # documentation for GET operation for this path
+      tags:
+        - Account
+      summary: Get user by user id
+      operationId: show
+      # list of parameters for the operation
+      parameters:
+        - name: id
+          in: path
+          description: The user id that needs to be fetched
+          required: true
+          schema:
+            type: number
+      # security schemas applied to this operation
+      security:
+        - basic_auth: []
+      responses: # list of responses
+        '200':
+          description: Success
+          content:
+            application/json: # operation response mime type
+              schema: # response schema can be specified for each response
+                $ref: '#/components/schemas/Account'
+              example: # response example
+                username: user1
+                email: user@example.com
+        '401':
+          description: Unauthorized
+        '404':
+          description: Not Found
+
+    # documentation for PUT operation for this path
+    put:
+      tags:
+        - Account
+      summary: Updated user
+      operationId: update
+      parameters:
+        - name: id
+          in: path
+          description: The user id that needs to be updated
+          required: true
+          schema:
+            type: number
+      security:
+        - basic_auth: []
+      responses:
+        '200':
+          description: Success
+        '422':
+          description: Invalid Parameters or resource exist
+        '401':
+          description: Unauthorized
+        '404':
+          description: Not Found
+      # request body documentation
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Account'
+        description: Updated user object
+        required: true
+
+    delete:
+      tags:
+        - Account
+      summary: Updated user
+      operationId: delete
+      parameters:
+        - name: id
+          in: path
+          description: The user id that needs to be updated
+          required: true
+          schema:
+            type: number
+      security:
+        - basic_auth: []
+      responses:
+        '200':
+          description: Success
+        '401':
+          description: Unauthorized
+        '404':
+          description: Not Found
+
+# An object to hold reusable parts that can be used across the definition
+components:
+  schemas:
+    Account:
+      type: object
+      properties:
+        uname:
+          description: User supplied username
+          type: string
+          minLength: 4
+          example: John78
+        email:
+          description: User email address
+          type: string
+          format: test
+          example: john.smith@example.com
+        password:
+          description: User supplied password
+          type: string
+          minLength: 8
+
+  # Security scheme definitions that can be used across the definition.
+  securitySchemes:
+    basic_auth: # security definition name (you can name it as you want)
+      type: http
+      scheme: basic
