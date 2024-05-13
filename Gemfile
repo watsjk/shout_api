@@ -17,8 +17,6 @@ gem "tzinfo-data", platforms: %i[ windows jruby ]
 gem 'rspec-rails', '~> 6.1', '>= 6.1.2'
 gem 'rspec-mocks', '~> 3.13', '>= 3.13.1'
 gem 'bcrypt', '~> 3.1', '>= 3.1.20'
-gem 'argon2-kdf', '~> 0.2.0'
-gem 'devise', '~> 4.9', '>= 4.9.4'
 
 # Use Rack CORS for handling Cross-Origin Resource Sharing (CORS), making cross-origin Ajax possible
 # gem "rack-cors"
@@ -26,7 +24,6 @@ gem 'devise', '~> 4.9', '>= 4.9.4'
 group :development, :test do
   # See https://guides.rubyonrails.org/debugging_rails_applications.html#debugging-with-the-debug-gem
   gem "debug", platforms: %i[ mri windows ]
-  gem 'rubocop', require: false
 end
 
 group :development do

@@ -48,8 +48,9 @@ paths:
                 items:
                   $ref: '#/components/schemas/Account'
               example: # response example
-                - uname: user1
-                  email: user1@example.com
+                - id: 1
+                  uname: "Acme"
+                  email: "acne@shout.com"
         '401':
           description: Unauthorized
     post:
@@ -58,6 +59,12 @@ paths:
       summary: Create user account
       security:
         - basic_auth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Account'
       responses:
         '201':
           description: Account created
@@ -68,11 +75,11 @@ paths:
               example: # response example
                 uname: user1
                 email: user1@example.com
+                password: null
         '422':
           description: Invalid Parameters or resource exist
         '401':
           description: Unauthorized
-
   '/accounts/{id}': # path parameter in curly braces
     get: # documentation for GET operation for this path
       tags:
@@ -99,6 +106,7 @@ paths:
               example: # response example
                 username: user1
                 email: user@example.com
+                password: null
         '401':
           description: Unauthorized
         '404':
@@ -120,6 +128,14 @@ paths:
       responses:
         '200':
           description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Account'
+              example:
+                username: user1
+                email: user@example.com
+                password: null
         '422':
           description: Invalid Parameters or resource exist
         '401':
@@ -156,7 +172,463 @@ paths:
           description: Not Found
 
   /posts:
+    get:
+      tags:
+        - Post
+      summary:
+        List all posts
+      security:
+        - basic_auth: [ ]
+      responses: # list of responses
+        '200':
+          description: Success
+          content:
+            application/json: # operation response mime type
+              schema: # response schema can be specified for each response
+                type: array
+                items:
+                  $ref: '#/components/schemas/Post'
+              example: # response example
+                - id: 1
+                  message: "Test message"
+                  liked: 0
+                  private: false
+                  account_id: 1
+        '401':
+          description: Unauthorized
+    post:
+      tags:
+        - Post
+      summary: Create post message
+      security:
+        - basic_auth: [ ]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Post'
+            example:
+              message: "Test message"
+              liked: 0
+              private: false
+              account_id: 1
+      responses:
+        '201':
+          description: Post created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Post'
+              example: # response example
+                id: 1
+                message: "Message"
+                liked: 0
+                private: false
+                account_id: 1
+        '422':
+          description: Invalid Parameters or resource exist
+        '401':
+          description: Unauthorized
   /posts/{id}:
+    get: # documentation for GET operation for this path
+      tags:
+        - Post
+      summary: Get a post by post id
+      # list of parameters for the operation
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: number
+      # security schemas applied to this operation
+      security:
+        - basic_auth: [ ]
+      responses: # list of responses
+        '200':
+          description: Success
+          content:
+            application/json: # operation response mime type
+              schema: # response schema can be specified for each response
+                $ref: '#/components/schemas/Post'
+              example: # response example
+                id: 1
+                message: "Test message"
+                liked: 0
+                private: false
+                account_id: 1
+        '401':
+          description: Unauthorized
+        '404':
+          description: Not Found
+    # documentation for PUT operation for this path
+    put:
+      tags:
+        - Post
+      summary: Updated a post
+      parameters:
+        - name: id
+          in: path
+          description: The id that needs to be updated
+          required: true
+          schema:
+            type: number
+      security:
+        - basic_auth: [ ]
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Post'
+              example:
+                id: 1
+                message: "Test message"
+                liked: 0
+                private: false
+                account_id: 1
+        '422':
+          description: Invalid Parameters or resource exist
+        '401':
+          description: Unauthorized
+        '404':
+          description: Not Found
+      # request body documentation
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Post'
+            example:
+              id: 1
+              message: "Test message"
+              liked: 0
+              private: false
+              account_id: 1
+        required: true
+    delete:
+      tags:
+        - Post
+      summary: Delete a post
+      parameters:
+        - name: id
+          in: path
+          description: The post id that needs to be delete
+          required: true
+          schema:
+            type: number
+      security:
+        - basic_auth: [ ]
+      responses:
+        '200':
+          description: Success
+        '401':
+          description: Unauthorized
+        '404':
+          description: Not Found
+
+  /media:
+    get:
+      tags:
+        - Media
+      summary:
+        List all posted images
+      security:
+        - basic_auth: [ ]
+      responses: # list of responses
+        '200':
+          description: Success
+          content:
+            application/json: # operation response mime type
+              schema: # response schema can be specified for each response
+                type: array
+                items:
+                  $ref: '#/components/schemas/Media'
+              example: # response example
+                - id: 1
+                  post_id: 1
+                  url: 'https://random.imagecdn.app/500/500'
+                  kind: 'image'
+        '401':
+          description: Unauthorized
+    post:
+      tags:
+        - Media
+      summary: Link image to a post
+      security:
+        - basic_auth: [ ]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Media'
+            example:
+              post_id: 1
+              url: 'https://random.imagecdn.app/500/500'
+              kind: 'image'
+      responses:
+        '201':
+          description: Post created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Media'
+              example: # response example
+                id: 1
+                post_id: 1
+                url: 'https://random.imagecdn.app/500/500'
+                kind: 'image'
+        '422':
+          description: Invalid Parameters or resource exist
+        '401':
+          description: Unauthorized
+  /media/{id}:
+    get: # documentation for GET operation for this path
+      tags:
+        - Media
+      summary: Get a image by id
+      # list of parameters for the operation
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: number
+      # security schemas applied to this operation
+      security:
+        - basic_auth: [ ]
+      responses: # list of responses
+        '200':
+          description: Success
+          content:
+            application/json: # operation response mime type
+              schema: # response schema can be specified for each response
+                $ref: '#/components/schemas/Media'
+              example: # response example
+                id: 1
+                post_id: 1
+                url: 'https://random.imagecdn.app/500/500'
+                kind: 'image'
+        '401':
+          description: Unauthorized
+        '404':
+          description: Not Found
+    # documentation for PUT operation for this path
+    put:
+      tags:
+        - Media
+      summary: Updated an image url
+      parameters:
+        - name: id
+          in: path
+          description: The id that needs to be updated
+          required: true
+          schema:
+            type: number
+      security:
+        - basic_auth: [ ]
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Post'
+              example:
+                id: 1
+                post_id: 1
+                url: 'https://random.imagecdn.app/500/500'
+                kind: 'image'
+        '422':
+          description: Invalid Parameters or resource exist
+        '401':
+          description: Unauthorized
+        '404':
+          description: Not Found
+      # request body documentation
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Media'
+            example:
+              id: 1
+              url: 'https://random.imagecdn.app/500/500'
+              kind: 'image'
+        required: true
+    delete:
+      tags:
+        - Media
+      summary: Delete an image
+      parameters:
+        - name: id
+          in: path
+          description: The image id that needs to be delete
+          required: true
+          schema:
+            type: number
+      security:
+        - basic_auth: [ ]
+      responses:
+        '200':
+          description: Success
+        '401':
+          description: Unauthorized
+        '404':
+          description: Not Found
+
+  /replies:
+    get:
+      tags:
+        - Reply
+      summary:
+        List all replies
+      security:
+        - basic_auth: [ ]
+      responses: # list of responses
+        '200':
+          description: Success
+          content:
+            application/json: # operation response mime type
+              schema: # response schema can be specified for each response
+                type: array
+                items:
+                  $ref: '#/components/schemas/Reply'
+              example: # response example
+                - id: 1
+                  message: 'reply message'
+                  post_id: 1
+                  account_id: 1
+        '401':
+          description: Unauthorized
+    post:
+      tags:
+        - Reply
+      summary: Reply to a post
+      security:
+        - basic_auth: [ ]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Reply'
+            example:
+              message: 'reply message'
+              post_id: 1
+              account_id: 1
+      responses:
+        '201':
+          description: Reply message created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Reply'
+              example: # response example
+                id: 1
+                message: 'reply message'
+                post_id: 1
+                account_id: 1
+        '422':
+          description: Invalid Parameters or resource exist
+        '401':
+          description: Unauthorized
+  /replies/{id}:
+    get: # documentation for GET operation for this path
+      tags:
+        - Reply
+      summary: Get a replied message by id
+      # list of parameters for the operation
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: number
+      # security schemas applied to this operation
+      security:
+        - basic_auth: [ ]
+      responses: # list of responses
+        '200':
+          description: Success
+          content:
+            application/json: # operation response mime type
+              schema: # response schema can be specified for each response
+                $ref: '#/components/schemas/Reply'
+              example: # response example
+                id: 1
+                message: 'reply message'
+                post_id: 1
+                account_id: 1
+        '401':
+          description: Unauthorized
+        '404':
+          description: Not Found
+    # documentation for PUT operation for this path
+    put:
+      tags:
+        - Reply
+      summary: Edit replied message
+      parameters:
+        - name: id
+          in: path
+          description: The id that needs to be updated
+          required: true
+          schema:
+            type: number
+      security:
+        - basic_auth: [ ]
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Reply'
+              example:
+                id: 1
+                message: 'reply message'
+                post_id: 1
+                account_id: 1
+        '422':
+          description: Invalid Parameters or resource exist
+        '401':
+          description: Unauthorized
+        '404':
+          description: Not Found
+      # request body documentation
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Reply'
+            example:
+              id: 1
+              message: 'edited reply message'
+        required: true
+    delete:
+      tags:
+        - Reply
+      summary: Delete replied message
+      parameters:
+        - name: id
+          in: path
+          description: The image id that needs to be delete
+          required: true
+          schema:
+            type: number
+      security:
+        - basic_auth: [ ]
+      responses:
+        '200':
+          description: Success
+        '401':
+          description: Unauthorized
+        '404':
+          description: Not Found
 
   '/follows':
     get:
@@ -180,13 +652,21 @@ paths:
                   following_id: 2
         '401':
           description: Unauthorized
-
     post:
       tags:
         - Follow
       summary: Create a follow record for a user
       security:
         - basic_auth: [ ]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Follow'
+            example:
+              follower_id: 1
+              following_id: 2
       responses:
         '201':
           description: Follow created
@@ -201,7 +681,6 @@ paths:
           description: Invalid Parameters or resource exist
         '401':
           description: Unauthorized
-
   '/follows/{id}': # path parameter in curly braces
     get: # documentation for GET operation for this path
       tags:
@@ -254,15 +733,115 @@ paths:
         '404':
           description: Not Found
 
+  '/favorites':
+    get:
+      tags:
+        - Favorite
+      summary:
+        List all saved post
+      security:
+        - basic_auth: [ ]
+      responses: # list of responses
+        '200':
+          description: Success
+          content:
+            application/json: # operation response mime type
+              schema: # response schema can be specified for each response
+                type: array
+                items:
+                  $ref: '#/components/schemas/Favorite'
+              example: # response example
+                - post_id: 1
+                  account_id: 2
+        '401':
+          description: Unauthorized
+    post:
+      tags:
+        - Favorite
+      summary: Create a favorite post
+      security:
+        - basic_auth: [ ]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Favorite'
+            example:
+              post_id: 1
+              account_id: 2
+      responses:
+        '201':
+          description: Follow created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Favorite'
+              example: # response example
+                post_id: 1
+                account_id: 2
+        '422':
+          description: Invalid Parameters or resource exist
+        '401':
+          description: Unauthorized
+  '/favorites/{id}': # path parameter in curly braces
+    get: # documentation for GET operation for this path
+      tags:
+        - Favorite
+      summary: Get a saved post
+      # list of parameters for the operation
+      parameters:
+        - name: id
+          in: path
+          description: The record id that needs to be fetched
+          required: true
+          schema:
+            type: number
+      # security schemas applied to this operation
+      security:
+        - basic_auth: [ ]
+      responses: # list of responses
+        '200':
+          description: Success
+          content:
+            application/json: # operation response mime type
+              schema: # response schema can be specified for each response
+                $ref: '#/components/schemas/Favorite'
+              example: # response example
+                post_id: 1
+                account_id: 2
+        '401':
+          description: Unauthorized
+        '404':
+          description: Not Found
+
+    delete:
+      tags:
+        - Favorite
+      summary: Delete saved post
+      parameters:
+        - name: id
+          in: path
+          description: The record id that needs to be delete
+          required: true
+          schema:
+            type: number
+      security:
+        - basic_auth: [ ]
+      responses:
+        '200':
+          description: Success
+        '401':
+          description: Unauthorized
+        '404':
+          description: Not Found
+
 # An object to hold reusable parts that can be used across the definition
 components:
   schemas:
     Account:
       type: object
       properties:
-        id:
-          description: unique identifier
-          type: integer
         uname:
           description: User supplied username
           type: string
@@ -274,22 +853,63 @@ components:
           format: test
           example: john.smith@example.com
         password:
-          description: User supplied password
+          description: User supplied password on creation
           type: string
           minLength: 8
+          maxLength: 20
     Post:
       type: object
       properties:
-        id:
+        message:
+          description: any message for posting
+          type: string
+          maxLength: 512
+        liked:
+          description: Number of interactivity
           type: integer
-        caption:
-
+        private:
+          description: Set post to private
+          type: boolean
+          default: false
+        account_id:
+          description: Post owner
+          type: integer
+    Media:
+      description:
+        Image that a user share on post.
+      type: object
+      properties:
+        post_id:
+          type: integer
+        url:
+          type: string
+          maxLength: 512
+        kind:
+          description: 'image/video'
+          type: string
+    Reply:
+      description:
+        Reply message on a post
+      type: object
+      properties:
+        post_id:
+          type: integer
+        account_id:
+          type: integer
+        message:
+          type: string
+          maxLength: 512
+    Favorite:
+      type: object
+      properties:
+        post_id:
+          type: integer
+        account_id:
+          type: integer
+          description: Owner
     Follow:
       type: object
       properties:
-        id:
-          description: unique identifier
-          type: integer
         follower_id:
           description: reference to follower account
           type: integer
