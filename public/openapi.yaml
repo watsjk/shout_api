@@ -155,6 +155,9 @@ paths:
         '404':
           description: Not Found
 
+  /posts:
+  /posts/{id}:
+
   '/follows':
     get:
       tags:
@@ -274,6 +277,13 @@ components:
           description: User supplied password
           type: string
           minLength: 8
+    Post:
+      type: object
+      properties:
+        id:
+          type: integer
+        caption:
+
     Follow:
       type: object
       properties:

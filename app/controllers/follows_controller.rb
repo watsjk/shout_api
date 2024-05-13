@@ -29,11 +29,6 @@ class FollowsController < ApplicationController
   # PATCH/PUT /follows/1
   def update
     render status: :not_implemented
-    # if @follow.update(follow_params)
-    #   render json: @follow
-    # else
-    #   render json: @follow.errors, status: :unprocessable_entity
-    # end
   end
 
   # DELETE /follows/1
