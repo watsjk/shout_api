@@ -1,9 +1,11 @@
+# frozen_string_literal: true
+
 require 'rails_helper'
 
 RSpec.describe Account, type: :model do
   account = Account.new uname: 'Acme', email: 'acme@test.com', password: 'verysecret'
 
-  it "should valid if required attributes are set." do
+  it 'should valid if required attributes are set.' do
     expect(account).to be_valid
   end
 

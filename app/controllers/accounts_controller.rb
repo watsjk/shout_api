@@ -1,5 +1,7 @@
+# frozen_string_literal: true
+
 class AccountsController < ApplicationController
-  before_action :set_account, only: %i[ show update destroy ]
+  before_action :set_account, only: %i[show update destroy]
 
   # GET /accounts
   def index
@@ -43,7 +45,7 @@ class AccountsController < ApplicationController
   # Use callbacks to share common setup or constraints between actions.
   def set_account
     @account = Account.find(params[:id])
-    rescue ActiveRecord::RecordNotFound then render status: :not_found
+  rescue ActiveRecord::RecordNotFound then render status: :not_found
   end
 
   # Only allow a list of trusted parameters through.
