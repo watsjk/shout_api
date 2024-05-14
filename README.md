@@ -24,7 +24,7 @@ Please see [API Specification](public/openapi.yaml) for more details.
 
 ### Setup instruction
 
-1) Clone this repo `git clone https://`
+1) Clone this repo to your machine.
 2) `cd` in to the project folder.
 3) Run `bundle install`
 4) Run `rake spec` run all tests. (Optional)
