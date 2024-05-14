@@ -45,6 +45,7 @@ class RepliesController < ApplicationController
   # Use callbacks to share common setup or constraints between actions.
   def set_reply
     @reply = Reply.find(params[:id])
+  rescue ActiveRecord::RecordNotFound then render status: :not_found
   end
 
   # Only allow a list of trusted parameters through.
