@@ -18,12 +18,24 @@ RSpec.describe '/favorites', type: :request do
   # This should return the minimal set of attributes required to create a valid
   # Favorite. As you add validations to Favorite, be sure to
   # adjust the attributes here as well.
+
+  let(:account) {
+    Account.create! "uname": 'account', "email": 'account1@shout.com', "password": 'simple88'
+  }
+
+  let(:post_item) {
+    Post.create! account_id: account.id
+  }
+
   let(:valid_attributes) do
-    skip('Add a hash of attributes valid for your model')
+    {
+      post_id: post_item.id,
+      account_id: account.id
+    }
   end
 
   let(:invalid_attributes) do
-    skip('Add a hash of attributes invalid for your model')
+    {}
   end
 
   # This should return the minimal set of values that should be in the headers
@@ -31,7 +43,11 @@ RSpec.describe '/favorites', type: :request do
   # FavoritesController, or in your router and rack
   # middleware. Be sure to keep this updated too.
   let(:valid_headers) do
-    {}
+    {
+      "Accept": 'application/json',
+      "Content-Type": 'application/json',
+      "Authorization": 'Basic U2hvdXQ6U3VwZXJTZWNyZXQ='
+    }
   end
 
   describe 'GET /index' do
@@ -45,7 +61,7 @@ RSpec.describe '/favorites', type: :request do
   describe 'GET /show' do
     it 'renders a successful response' do
       favorite = Favorite.create! valid_attributes
-      get favorite_url(favorite), as: :json
+      get favorite_url(favorite), headers:valid_headers, as: :json
       expect(response).to be_successful
     end
   end
@@ -85,36 +101,10 @@ RSpec.describe '/favorites', type: :request do
   end
 
   describe 'PATCH /update' do
-    context 'with valid parameters' do
-      let(:new_attributes) do
-        skip('Add a hash of attributes valid for your model')
-      end
-
-      it 'updates the requested favorite' do
-        favorite = Favorite.create! valid_attributes
-        patch favorite_url(favorite),
-              params: { favorite: new_attributes }, headers: valid_headers, as: :json
-        favorite.reload
-        skip('Add assertions for updated state')
-      end
-
-      it 'renders a JSON response with the favorite' do
-        favorite = Favorite.create! valid_attributes
-        patch favorite_url(favorite),
-              params: { favorite: new_attributes }, headers: valid_headers, as: :json
-        expect(response).to have_http_status(:ok)
-        expect(response.content_type).to match(a_string_including('application/json'))
-      end
-    end
-
-    context 'with invalid parameters' do
-      it 'renders a JSON response with errors for the favorite' do
-        favorite = Favorite.create! valid_attributes
-        patch favorite_url(favorite),
-              params: { favorite: invalid_attributes }, headers: valid_headers, as: :json
-        expect(response).to have_http_status(:unprocessable_entity)
-        expect(response.content_type).to match(a_string_including('application/json'))
-      end
+    it 'not support updating' do
+      fav = Favorite.create! valid_attributes
+      patch follow_url(fav), headers: valid_headers, as: :json
+      expect(response).to have_http_status(:not_implemented)
     end
   end
 

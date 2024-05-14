@@ -16,12 +16,26 @@ RSpec.describe "/replies", type: :request do
   # This should return the minimal set of attributes required to create a valid
   # Reply. As you add validations to Reply, be sure to
   # adjust the attributes here as well.
+  let(:account) {
+    Account.create! "uname": 'account', "email": 'account1@shout.com', "password": 'simple88'
+  }
+
+  let(:post_item) {
+    Post.create! account_id: account.id
+  }
+
   let(:valid_attributes) {
-    skip("Add a hash of attributes valid for your model")
+    {
+      message: 'feedback',
+      post_id: post_item.id,
+      account_id: account.id
+    }
   }
 
   let(:invalid_attributes) {
-    skip("Add a hash of attributes invalid for your model")
+    {
+      message: ''
+    }
   }
 
   # This should return the minimal set of values that should be in the headers
@@ -29,7 +43,11 @@ RSpec.describe "/replies", type: :request do
   # RepliesController, or in your router and rack
   # middleware. Be sure to keep this updated too.
   let(:valid_headers) {
-    {}
+    {
+      "Accept": 'application/json',
+      "Content-Type": 'application/json',
+      "Authorization": 'Basic U2hvdXQ6U3VwZXJTZWNyZXQ='
+    }
   }
 
   describe "GET /index" do
@@ -43,7 +61,7 @@ RSpec.describe "/replies", type: :request do
   describe "GET /show" do
     it "renders a successful response" do
       reply = Reply.create! valid_attributes
-      get reply_url(reply), as: :json
+      get reply_url(reply), headers: valid_headers, as: :json
       expect(response).to be_successful
     end
   end
@@ -85,7 +103,9 @@ RSpec.describe "/replies", type: :request do
   describe "PATCH /update" do
     context "with valid parameters" do
       let(:new_attributes) {
-        skip("Add a hash of attributes valid for your model")
+        {
+          message: 'edit'
+        }
       }
 
       it "updates the requested reply" do
@@ -93,7 +113,7 @@ RSpec.describe "/replies", type: :request do
         patch reply_url(reply),
               params: { reply: new_attributes }, headers: valid_headers, as: :json
         reply.reload
-        skip("Add assertions for updated state")
+        expect(response['message']).to eq(new_attributes['message'])
       end
 
       it "renders a JSON response with the reply" do

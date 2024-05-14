@@ -24,6 +24,7 @@ class FavoritesController < ApplicationController
     else
       render json: @favorite.errors, status: :unprocessable_entity
     end
+  rescue ActiveRecord::NotNullViolation then render status: :unprocessable_entity
   end
 
   # PATCH/PUT /favorites/1
@@ -46,6 +47,6 @@ class FavoritesController < ApplicationController
 
   # Only allow a list of trusted parameters through.
   def favorite_params
-    params.require(:favorite).permit(:account_id, :post_id)
+    params.fetch(:favorite).permit(:account_id, :post_id)
   end
 end

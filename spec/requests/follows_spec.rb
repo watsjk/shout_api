@@ -19,25 +19,17 @@ RSpec.describe '/follows', type: :request do
   # Follow. As you add validations to Follow, be sure to
   # adjust the attributes here as well.
   let(:valid_follower) do
-    {
-      "uname": 'follower',
-      "email": 'account1@shout.com',
-      "password": 'simple88'
-    }
+    Account.create! "uname": 'follower', "email": 'account1@shout.com', "password": 'simple88'
   end
 
   let(:valid_following) do
-    {
-      "uname": 'following',
-      "email": 'account2@shout.com',
-      "password": 'simple88'
-    }
+    Account.create! "uname": 'following', "email": 'account2@shout.com', "password": 'simple88'
   end
 
   let(:valid_attributes) do
     {
-      "follower_id": 1,
-      "following_id": 2
+      "follower_id": valid_follower.id,
+      "following_id": valid_following.id
     }
   end
 
@@ -55,11 +47,6 @@ RSpec.describe '/follows', type: :request do
       "Content-Type": 'application/json',
       "Authorization": 'Basic U2hvdXQ6U3VwZXJTZWNyZXQ='
     }
-  end
-
-  before do
-    Account.create! valid_following
-    Account.create! valid_follower
   end
 
   describe 'GET /index' do

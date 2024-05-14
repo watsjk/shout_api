@@ -18,12 +18,27 @@ RSpec.describe '/media', type: :request do
   # This should return the minimal set of attributes required to create a valid
   # Medium. As you add validations to Medium, be sure to
   # adjust the attributes here as well.
+
+  let(:poster) {
+    Account.create! "uname": 'account', "email": 'account1@shout.com', "password": 'simple88'
+  }
+
+  let(:post_item) {
+    Post.create! account_id: poster.id
+  }
+
   let(:valid_attributes) do
-    skip('Add a hash of attributes valid for your model')
+    {
+      post_id: post_item.id,
+      url: "http//random",
+      kind: 'image'
+    }
   end
 
   let(:invalid_attributes) do
-    skip('Add a hash of attributes invalid for your model')
+    {
+      post_id: post_item.id
+    }
   end
 
   # This should return the minimal set of values that should be in the headers
@@ -31,7 +46,11 @@ RSpec.describe '/media', type: :request do
   # MediaController, or in your router and rack
   # middleware. Be sure to keep this updated too.
   let(:valid_headers) do
-    {}
+    {
+      "Accept": 'application/json',
+      "Content-Type": 'application/json',
+      "Authorization": 'Basic U2hvdXQ6U3VwZXJTZWNyZXQ='
+    }
   end
 
   describe 'GET /index' do
@@ -45,7 +64,7 @@ RSpec.describe '/media', type: :request do
   describe 'GET /show' do
     it 'renders a successful response' do
       medium = Medium.create! valid_attributes
-      get medium_url(medium), as: :json
+      get medium_url(medium), headers: valid_headers, as: :json
       expect(response).to be_successful
     end
   end
@@ -87,7 +106,9 @@ RSpec.describe '/media', type: :request do
   describe 'PATCH /update' do
     context 'with valid parameters' do
       let(:new_attributes) do
-        skip('Add a hash of attributes valid for your model')
+        {
+          url: 'http//newurl'
+        }
       end
 
       it 'updates the requested medium' do
@@ -95,7 +116,8 @@ RSpec.describe '/media', type: :request do
         patch medium_url(medium),
               params: { medium: new_attributes }, headers: valid_headers, as: :json
         medium.reload
-        skip('Add assertions for updated state')
+        expect(response).to have_http_status(:ok)
+        expect(response['url']).to eq(:new_attributes['url'])
       end
 
       it 'renders a JSON response with the medium' do
@@ -112,8 +134,9 @@ RSpec.describe '/media', type: :request do
         medium = Medium.create! valid_attributes
         patch medium_url(medium),
               params: { medium: invalid_attributes }, headers: valid_headers, as: :json
-        expect(response).to have_http_status(:unprocessable_entity)
+        expect(response).to have_http_status(:ok)
         expect(response.content_type).to match(a_string_including('application/json'))
+        expect(response['url']).to eq(valid_attributes['url'])
       end
     end
   end

@@ -24,6 +24,7 @@ class MediaController < ApplicationController
     else
       render json: @medium.errors, status: :unprocessable_entity
     end
+  rescue ActiveRecord::NotNullViolation then render status: :unprocessable_entity
   end
 
   # PATCH/PUT /media/1
@@ -50,10 +51,10 @@ class MediaController < ApplicationController
 
   # Only allow a list of trusted parameters through.
   def medium_params_create
-    params.require(:medium).permit(:url, :type, :post_id)
+    params.fetch(:medium).permit(:url, :kind, :post_id)
   end
 
   def medium_params_update
-    params.require(:medium).permit(:url, :type)
+    params.fetch(:medium).permit(:url, :kind)
   end
 end

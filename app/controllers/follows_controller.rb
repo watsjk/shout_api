@@ -24,6 +24,7 @@ class FollowsController < ApplicationController
     else
       render json: @follow.errors, status: :unprocessable_entity
     end
+  rescue ActiveRecord::NotNullViolation then render status: :unprocessable_entity
   end
 
   # PATCH/PUT /follows/1

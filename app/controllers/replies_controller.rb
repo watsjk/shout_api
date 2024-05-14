@@ -24,6 +24,7 @@ class RepliesController < ApplicationController
     else
       render json: @reply.errors, status: :unprocessable_entity
     end
+  rescue ActiveRecord::NotNullViolation then render status: :unprocessable_entity
   end
 
   # PATCH/PUT /replies/1
@@ -50,10 +51,10 @@ class RepliesController < ApplicationController
 
   # Only allow a list of trusted parameters through.
   def reply_params_create
-    params.require(:reply).permit(:comment, :post_id, :reply_to_id)
+    params.fetch(:reply).permit(:message, :post_id, :account_id)
   end
 
   def reply_params_update
-    params.require(:reply).permit(:comment)
+    params.fetch(:reply).permit(:message)
   end
 end

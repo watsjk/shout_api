@@ -85,7 +85,7 @@ RSpec.describe '/accounts', type: :request do
       it 'does not create a new Account' do
         expect do
           post accounts_url,
-               params: { account: invalid_attributes }, as: :json
+               params: { account: invalid_attributes }, headers: valid_headers, as: :json
         end.to change(Account, :count).by(0)
       end
 
